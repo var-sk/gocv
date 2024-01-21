@@ -6,9 +6,9 @@ package contrib
 // Changes here should be mirrored in gocv/cgo.go and cuda/cgo.go
 
 /*
-#cgo !windows pkg-config: opencv4
 #cgo CXXFLAGS:   --std=c++11
-#cgo windows  CPPFLAGS:   -IC:/opencv/build/install/include
-#cgo windows  LDFLAGS:    -LC:/opencv/build/install/x64/mingw/lib -lopencv_core481 -lopencv_face481 -lopencv_videoio481 -lopencv_imgproc481 -lopencv_highgui481 -lopencv_imgcodecs481 -lopencv_objdetect481 -lopencv_features2d481 -lopencv_video481 -lopencv_dnn481 -lopencv_xfeatures2d481 -lopencv_plot481 -lopencv_tracking481 -lopencv_img_hash481 -lopencv_calib3d481 -lopencv_bgsegm481 -lopencv_xphoto481 -lopencv_aruco481 -lopencv_wechat_qrcode481 -lopencv_ximgproc481
+#cgo !windows LDFLAGS: -L/usr/local/lib
+#cgo windows  LDFLAGS: -LC:/opencv/opencv_connect_4.8.1/bin
+#cgo LDFLAGS: -lgocv_contrib
 */
 import "C"

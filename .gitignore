@@ -10,3 +10,9 @@ count.out
 .idea/
 contrib/data.yaml
 contrib/testOilPainting.png
+build
+*.dll
+*.exe
+vendor/
+.vs/
+cMakeSettings.json
