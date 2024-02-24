@@ -21,6 +21,10 @@ type GpuMat struct {
 	p C.GpuMat
 }
 
+type DeviceProperties struct {
+	name string
+}
+
 // Upload performs data upload to GpuMat (Blocking call)
 //
 // For further details, please see:
@@ -125,6 +129,10 @@ func SetDevice(device int) {
 // https://docs.opencv.org/master/d8/d40/group__cudacore__init.html#ga6153b6f461101374e655a54fc77e725e
 func ResetDevice() {
 	C.ResetCudaDevice()
+}
+
+func GetCudaDeviceProperties(device int) DeviceProperties {
+	return C.GetCudaDeviceProperties(device)
 }
 
 // ConvertTo converts GpuMat into destination GpuMat.

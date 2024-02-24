@@ -20,6 +20,14 @@ typedef void* GpuMat;
 typedef void* Stream;
 #endif
 
+typedef struct {
+    char name[256];
+    int device;
+    size_t totalMemory;
+    size_t freeMemory;
+    int multiProcessorCount;
+} DeviceProperties;
+
 DLL_EXPORT GpuMat GpuMat_New();
 DLL_EXPORT GpuMat GpuMat_NewFromMat(Mat mat);
 DLL_EXPORT GpuMat GpuMat_NewWithSize(int rows, int cols, int type);
@@ -41,6 +49,8 @@ DLL_EXPORT int GetCudaEnabledDeviceCount();
 DLL_EXPORT int GetCudaDevice();
 DLL_EXPORT void SetCudaDevice(int device);
 DLL_EXPORT void ResetCudaDevice();
+
+DLL_EXPORT DeviceProperties GetCudaDeviceProperties(int device);
 
 DLL_EXPORT Stream Stream_New();
 DLL_EXPORT void Stream_Close(Stream s);
