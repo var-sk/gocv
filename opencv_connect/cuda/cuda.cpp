@@ -60,9 +60,9 @@ void ResetCudaDevice(){
     cv::cuda::resetDevice();
 }
 
-DeviceProperties GetCudaDeviceProperties(int device) {
+DeviceInfoStruct GetCudaDeviceInfo(int device) {
     cv::cuda::DeviceInfo deviceInfo(device);
-    DeviceProperties deviceProps;
+    DeviceInfoStruct deviceProps;
     strncpy(deviceProps.name, deviceInfo.name(), sizeof(deviceProps.name) - 1);
     deviceProps.device = deviceInfo.deviceID();
     deviceProps.totalMemory = deviceInfo.totalMemory();

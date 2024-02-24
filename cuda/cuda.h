@@ -26,7 +26,7 @@ typedef struct {
     size_t totalMemory;
     size_t freeMemory;
     int multiProcessorCount;
-} DeviceProperties;
+} DeviceInfoStruct;
 
 DLL_EXPORT GpuMat GpuMat_New();
 DLL_EXPORT GpuMat GpuMat_NewFromMat(Mat mat);
@@ -50,7 +50,7 @@ DLL_EXPORT int GetCudaDevice();
 DLL_EXPORT void SetCudaDevice(int device);
 DLL_EXPORT void ResetCudaDevice();
 
-DLL_EXPORT DeviceProperties GetCudaDeviceProperties(int device);
+DLL_EXPORT DeviceInfoStruct GetCudaDeviceInfo(int device);
 
 DLL_EXPORT Stream Stream_New();
 DLL_EXPORT void Stream_Close(Stream s);

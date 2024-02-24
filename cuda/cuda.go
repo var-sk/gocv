@@ -21,8 +21,11 @@ type GpuMat struct {
 	p C.GpuMat
 }
 
-type DeviceProperties struct {
-	name string
+type DeviceInfo struct {
+	ID                      int
+	Name                    string
+	TotalMemory, FreeMemory uint64
+	MultiProcessorCount     int
 }
 
 // Upload performs data upload to GpuMat (Blocking call)
@@ -131,8 +134,16 @@ func ResetDevice() {
 	C.ResetCudaDevice()
 }
 
-func GetCudaDeviceProperties(device int) DeviceProperties {
-	return C.GetCudaDeviceProperties(device)
+func GetDeviceInfo(device int) DeviceInfo {
+	cDeviceInfo := C.GetCudaDeviceInfo(C.int(device))
+	deviceInfo := DeviceInfo{
+		ID:                  int(cDeviceInfo.device),
+		Name:                C.GoString(&cDeviceInfo.name[0]),
+		TotalMemory:         uint64(cDeviceInfo.totalMemory),
+		FreeMemory:          uint64(cDeviceInfo.freeMemory),
+		MultiProcessorCount: int(cDeviceInfo.multiProcessorCount),
+	}
+	return deviceInfo
 }
 
 // ConvertTo converts GpuMat into destination GpuMat.
