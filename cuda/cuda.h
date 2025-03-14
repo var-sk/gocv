@@ -28,6 +28,12 @@ typedef struct {
     int multiProcessorCount;
 } DeviceInfoStruct;
 
+// Wrapper for the vector of GpuMat aka std::vector<GpuMat>
+typedef struct GpuMats {
+    GpuMat* mats;
+    int length;
+} GpuMats;
+
 DLL_EXPORT GpuMat GpuMat_New();
 DLL_EXPORT GpuMat GpuMat_NewFromMat(Mat mat);
 DLL_EXPORT GpuMat GpuMat_NewWithSize(int rows, int cols, int type);
@@ -36,6 +42,7 @@ DLL_EXPORT void GpuMat_Download(GpuMat m, Mat dst, Stream s);
 DLL_EXPORT void GpuMat_Close(GpuMat m);
 DLL_EXPORT int GpuMat_Empty(GpuMat m);
 DLL_EXPORT void GpuMat_ConvertTo(GpuMat m, GpuMat dst, int type, Stream s);
+DLL_EXPORT void GpuMat_ConvertFp16(GpuMat m, GpuMat dst);
 DLL_EXPORT void GpuMat_CopyTo(GpuMat m, GpuMat dst, Stream s);
 DLL_EXPORT GpuMat GpuMat_Reshape(GpuMat m, int cn, int rows);
 DLL_EXPORT int GpuMat_Cols(GpuMat m);
@@ -49,13 +56,14 @@ DLL_EXPORT int GetCudaEnabledDeviceCount();
 DLL_EXPORT int GetCudaDevice();
 DLL_EXPORT void SetCudaDevice(int device);
 DLL_EXPORT void ResetCudaDevice();
-
-DLL_EXPORT DeviceInfoStruct GetCudaDeviceInfo(int device);
+DLL_EXPORT bool CudaDeviceSupports(int features);
 
 DLL_EXPORT Stream Stream_New();
 DLL_EXPORT void Stream_Close(Stream s);
 DLL_EXPORT bool Stream_QueryIfComplete(Stream s);
 DLL_EXPORT void Stream_WaitForCompletion(Stream s);
+
+DLL_EXPORT DeviceInfoStruct GetCudaDeviceInfo(int device);
 
 #ifdef __cplusplus
 }

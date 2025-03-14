@@ -2,6 +2,7 @@
 #define _OPENCV3_CORE_H_
 
 #include "mvsc.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -110,6 +111,14 @@ typedef struct Rect {
     int height;
 } Rect;
 
+// Wrapper for an individual cv::cvRect2f
+typedef struct Rect2f {
+    float x;
+    float y;
+    float width;
+    float height;
+} Rect2f;
+
 // Wrapper for the vector of Rect struct aka std::vector<Rect>
 typedef struct Rects {
     Rect* rects;
@@ -122,6 +131,12 @@ typedef struct Size {
     int height;
 } Size;
 
+// Wrapper for an individual cv::cvSize
+typedef struct Size2f {
+    float width;
+    float height;
+} Size2f;
+
 // Wrapper for an individual cv::RotatedRect
 typedef struct RotatedRect {
     Points pts;
@@ -130,6 +145,15 @@ typedef struct RotatedRect {
     Size size;
     double angle;
 } RotatedRect;
+
+// Wrapper for an individual cv::RotatedRect2f
+typedef struct RotatedRect2f {
+    Points2f pts;
+    Rect boundingRect;
+    Point2f center;
+    Size2f size;
+    double angle;
+} RotatedRect2f;
 
 // Wrapper for an individual cv::cvScalar
 typedef struct Scalar {
@@ -239,6 +263,7 @@ typedef std::vector< cv::Point2f >* Point2fVector;
 typedef std::vector< std::vector< cv::Point2f> >* Points2fVector;
 typedef std::vector< cv::Point3f >* Point3fVector;
 typedef std::vector< std::vector< cv::Point3f > >* Points3fVector;
+typedef cv::RotatedRect* RotatedRectT;
 #else
 typedef void* Mat;
 typedef void* TermCriteria;
@@ -249,6 +274,7 @@ typedef void* Point2fVector;
 typedef void* Points2fVector;
 typedef void* Point3fVector;
 typedef void* Points3fVector;
+typedef void* RotatedRectT;
 #endif
 
 // Wrapper for the vector of Mat aka std::vector<Mat>
@@ -269,6 +295,8 @@ DLL_EXPORT void Rects_Close(struct Rects rs);
 DLL_EXPORT void Mats_Close(struct Mats mats);
 DLL_EXPORT void Point_Close(struct Point p);
 DLL_EXPORT void Points_Close(struct Points ps);
+DLL_EXPORT void Point2f_Close(struct Point2f p);
+DLL_EXPORT void Points2f_Close(struct Points2f ps);
 DLL_EXPORT void DMatches_Close(struct DMatches ds);
 DLL_EXPORT void MultiDMatches_Close(struct MultiDMatches mds);
 
@@ -280,10 +308,15 @@ DLL_EXPORT Mat Mat_NewWithSizesFromBytes(IntVector sizes, int type, struct ByteA
 DLL_EXPORT Mat Mat_NewFromScalar(const Scalar ar, int type);
 DLL_EXPORT Mat Mat_NewWithSizeFromScalar(const Scalar ar, int rows, int cols, int type);
 DLL_EXPORT Mat Mat_NewFromBytes(int rows, int cols, int type, struct ByteArray buf);
+DLL_EXPORT Mat Mat_NewFromPoint2fVector(Point2fVector pfv, bool copy_data);
+DLL_EXPORT Mat Mat_NewFromPointVector(PointVector pv, bool copy_data);
 DLL_EXPORT Mat Mat_FromPtr(Mat m, int rows, int cols, int type, int prows, int pcols);
 DLL_EXPORT void Mat_Close(Mat m);
 DLL_EXPORT int Mat_Empty(Mat m);
 DLL_EXPORT bool Mat_IsContinuous(Mat m);
+DLL_EXPORT void Mat_Inv(Mat m);
+DLL_EXPORT Mat Mat_Col(Mat m, int c);
+DLL_EXPORT Mat Mat_Row(Mat m, int r);
 DLL_EXPORT Mat Mat_Clone(Mat m);
 DLL_EXPORT void Mat_CopyTo(Mat m, Mat dst);
 DLL_EXPORT int Mat_Total(Mat m);
@@ -380,7 +413,12 @@ DLL_EXPORT void Mat_DFT(Mat m, Mat dst, int flags);
 DLL_EXPORT void Mat_Divide(Mat src1, Mat src2, Mat dst);
 DLL_EXPORT bool Mat_Eigen(Mat src, Mat eigenvalues, Mat eigenvectors);
 DLL_EXPORT void Mat_EigenNonSymmetric(Mat src, Mat eigenvalues, Mat eigenvectors);
+DLL_EXPORT void Mat_PCABackProject(Mat data, Mat mean, Mat eigenvectors, Mat result);
 DLL_EXPORT void Mat_PCACompute(Mat src, Mat mean, Mat eigenvectors, Mat eigenvalues, int maxComponents);
+DLL_EXPORT void Mat_PCAProject(Mat data, Mat mean, Mat eigenvectors, Mat result);
+DLL_EXPORT double PSNR(Mat src1, Mat src2);
+DLL_EXPORT void SVBackSubst(Mat w, Mat u, Mat vt, Mat rhs, Mat dst);
+DLL_EXPORT void SVDecomp(Mat src, Mat w, Mat u, Mat vt);
 DLL_EXPORT void Mat_Exp(Mat src, Mat dst);
 DLL_EXPORT void Mat_ExtractChannel(Mat src, Mat dst, int coi);
 DLL_EXPORT void Mat_FindNonZero(Mat src, Mat idx);
@@ -400,12 +438,15 @@ DLL_EXPORT double KMeans(Mat data, int k, Mat bestLabels, TermCriteria criteria,
 DLL_EXPORT double KMeansPoints(PointVector pts, int k, Mat bestLabels, TermCriteria criteria, int attempts, int flags, Mat centers);
 DLL_EXPORT void Mat_Log(Mat src, Mat dst);
 DLL_EXPORT void Mat_Magnitude(Mat x, Mat y, Mat magnitude);
+DLL_EXPORT double Mat_Mahalanobis(Mat v1, Mat v2, Mat icovar);
+DLL_EXPORT void MulTransposed(Mat src, Mat dest, bool ata);
 DLL_EXPORT void Mat_Max(Mat src1, Mat src2, Mat dst);
 DLL_EXPORT void Mat_MeanStdDev(Mat src, Mat dstMean, Mat dstStdDev);
 DLL_EXPORT void Mat_Merge(struct Mats mats, Mat dst);
 DLL_EXPORT void Mat_Min(Mat src1, Mat src2, Mat dst);
 DLL_EXPORT void Mat_MinMaxIdx(Mat m, double* minVal, double* maxVal, int* minIdx, int* maxIdx);
 DLL_EXPORT void Mat_MinMaxLoc(Mat m, double* minVal, double* maxVal, Point* minLoc, Point* maxLoc);
+DLL_EXPORT void Mat_MinMaxLocWithMask(Mat m, double* minVal, double* maxVal, Point* minLoc, Point* maxLoc, Mat mask);
 DLL_EXPORT void Mat_MixChannels(struct Mats src, struct Mats dst, struct IntVector fromTo);
 DLL_EXPORT void Mat_MulSpectrums(Mat a, Mat b, Mat c, int flags);
 DLL_EXPORT void Mat_Multiply(Mat src1, Mat src2, Mat dst);
@@ -431,6 +472,7 @@ DLL_EXPORT void Mat_Subtract(Mat src1, Mat src2, Mat dst);
 DLL_EXPORT Scalar Mat_Trace(Mat src);
 DLL_EXPORT void Mat_Transform(Mat src, Mat dst, Mat tm);
 DLL_EXPORT void Mat_Transpose(Mat src, Mat dst);
+DLL_EXPORT void Mat_TransposeND(Mat src, struct IntVector order, Mat dst);
 DLL_EXPORT void Mat_PolarToCart(Mat magnitude, Mat degree, Mat x, Mat y, bool angleInDegrees);
 DLL_EXPORT void Mat_Pow(Mat src, double power, Mat dst);
 DLL_EXPORT void Mat_Phase(Mat x, Mat y, Mat angle, bool angleInDegrees);
@@ -518,6 +560,11 @@ DLL_EXPORT void Points3fVector_Close(Points3fVector ps);
 
 DLL_EXPORT void SetNumThreads(int n);
 DLL_EXPORT int GetNumThreads();
+
+
+DLL_EXPORT struct RotatedRect RotatedRect_Create(struct Point2f center, int width, int height, float angle);
+DLL_EXPORT struct RotatedRect2f RotatedRect2f_Create(struct Point2f center, float width, float height, float angle);
+
 
 #ifdef __cplusplus
 }

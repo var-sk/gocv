@@ -26,6 +26,21 @@ typedef void* TemplateMatching;
 
 // standalone functions
 DLL_EXPORT void GpuCvtColor(GpuMat src, GpuMat dst, int code, Stream s);
+DLL_EXPORT void GpuDemosaicing(GpuMat src, GpuMat dst, int code, Stream s);
+DLL_EXPORT void AlphaComp(GpuMat img1, GpuMat img2, GpuMat dst, int alpha_op, Stream s);
+DLL_EXPORT void GammaCorrection(GpuMat src, GpuMat dst, bool forward, Stream s);
+DLL_EXPORT void SwapChannels(GpuMat image, int dstOrder[4], Stream s);
+DLL_EXPORT void Cuda_CalcHist(GpuMat src, GpuMat dst, Stream s);
+DLL_EXPORT void Cuda_CalcHist_WithParams(GpuMat src, GpuMat mask, GpuMat dst, Stream s);
+DLL_EXPORT void Cuda_EqualizeHist(GpuMat src, GpuMat dst, Stream s);
+DLL_EXPORT void Cuda_EvenLevels(GpuMat levels, int nLevels, int lowerLevel, int upperLevel, Stream s);
+DLL_EXPORT void Cuda_HistEven(GpuMat src, GpuMat hist, int histSize, int lowerLevel, int upperLevel, Stream s);
+DLL_EXPORT void Cuda_HistRange(GpuMat src, GpuMat hist, GpuMat levels, Stream s);
+DLL_EXPORT void Cuda_BilateralFilter(GpuMat src, GpuMat dst, int kernel_size, float sigma_color, float sigma_spatial, int borderMode, Stream s);
+DLL_EXPORT void Cuda_BlendLinear(GpuMat img1, GpuMat img2, GpuMat weights1, GpuMat weights2, GpuMat result, Stream s);
+DLL_EXPORT void Cuda_MeanShiftFiltering(GpuMat src, GpuMat dst, int sp, int sr, TermCriteria criteria, Stream s);
+DLL_EXPORT void Cuda_MeanShiftProc(GpuMat src, GpuMat dstr, GpuMat dstsp, int sp, int sr, TermCriteria criteria, Stream s);
+DLL_EXPORT void Cuda_MeanShiftSegmentation(GpuMat src, GpuMat dst, int sp, int sr, int minSize, TermCriteria criteria, Stream s);
 
 // CannyEdgeDetector
 DLL_EXPORT CannyEdgeDetector CreateCannyEdgeDetector(double lowThresh, double highThresh);

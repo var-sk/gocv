@@ -39,6 +39,7 @@ typedef void* SIFT;
 DLL_EXPORT AKAZE AKAZE_Create();
 DLL_EXPORT void AKAZE_Close(AKAZE a);
 DLL_EXPORT struct KeyPoints AKAZE_Detect(AKAZE a, Mat src);
+DLL_EXPORT struct KeyPoints AKAZE_Compute(AKAZE a, Mat src, struct KeyPoints kp, Mat desc);
 DLL_EXPORT struct KeyPoints AKAZE_DetectAndCompute(AKAZE a, Mat src, Mat mask, Mat desc);
 
 DLL_EXPORT AgastFeatureDetector AgastFeatureDetector_Create();
@@ -48,6 +49,7 @@ DLL_EXPORT struct KeyPoints AgastFeatureDetector_Detect(AgastFeatureDetector a, 
 DLL_EXPORT BRISK BRISK_Create();
 DLL_EXPORT void BRISK_Close(BRISK b);
 DLL_EXPORT struct KeyPoints BRISK_Detect(BRISK b, Mat src);
+DLL_EXPORT struct KeyPoints BRISK_Compute(BRISK b, Mat src, struct KeyPoints kp, Mat desc);
 DLL_EXPORT struct KeyPoints BRISK_DetectAndCompute(BRISK b, Mat src, Mat mask, Mat desc);
 
 DLL_EXPORT FastFeatureDetector FastFeatureDetector_Create();
@@ -62,6 +64,7 @@ DLL_EXPORT struct KeyPoints GFTTDetector_Detect(GFTTDetector a, Mat src);
 DLL_EXPORT KAZE KAZE_Create();
 DLL_EXPORT void KAZE_Close(KAZE a);
 DLL_EXPORT struct KeyPoints KAZE_Detect(KAZE a, Mat src);
+DLL_EXPORT struct KeyPoints KAZE_Compute(KAZE a, Mat src, struct KeyPoints kp, Mat desc);
 DLL_EXPORT struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc);
 
 DLL_EXPORT MSER MSER_Create();
@@ -72,6 +75,7 @@ DLL_EXPORT ORB ORB_Create();
 DLL_EXPORT ORB ORB_CreateWithParams(int nfeatures, float scaleFactor, int nlevels, int edgeThreshold, int firstLevel, int WTA_K, int scoreType, int patchSize, int fastThreshold);
 DLL_EXPORT void ORB_Close(ORB o);
 DLL_EXPORT struct KeyPoints ORB_Detect(ORB o, Mat src);
+DLL_EXPORT struct KeyPoints ORB_Compute(ORB o, Mat src, struct KeyPoints kp, Mat desc);
 DLL_EXPORT struct KeyPoints ORB_DetectAndCompute(ORB o, Mat src, Mat mask, Mat desc);
 
 DLL_EXPORT SimpleBlobDetector SimpleBlobDetector_Create();
@@ -93,8 +97,10 @@ DLL_EXPORT struct MultiDMatches FlannBasedMatcher_KnnMatch(FlannBasedMatcher f, 
 DLL_EXPORT void DrawKeyPoints(Mat src, struct KeyPoints kp, Mat dst, const Scalar s, int flags);
 
 DLL_EXPORT SIFT SIFT_Create();
+DLL_EXPORT SIFT SIFT_CreateWithParams(int nfeatures, int nOctaveLayers, double contrastThreshold, double edgeThreshold, double sigma);
 DLL_EXPORT void SIFT_Close(SIFT f);
 DLL_EXPORT struct KeyPoints SIFT_Detect(SIFT f, Mat src);
+DLL_EXPORT struct KeyPoints SIFT_Compute(SIFT f, Mat src, struct KeyPoints kp, Mat desc);
 DLL_EXPORT struct KeyPoints SIFT_DetectAndCompute(SIFT f, Mat src, Mat mask, Mat desc);
 
 DLL_EXPORT void DrawMatches(Mat img1, struct KeyPoints kp1, Mat img2, struct KeyPoints kp2, struct DMatches matches1to2, Mat outImg, const Scalar matchesColor, const Scalar pointColor, struct ByteArray matchesMask, int flags);

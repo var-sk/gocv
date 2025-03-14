@@ -11,6 +11,8 @@ extern "C" {
 #include "core.h"
 
 DLL_EXPORT Mat Image_IMRead(const char* filename, int flags);
+DLL_EXPORT Mats Image_IMReadMulti(const char* filename, int flags);
+DLL_EXPORT Mats Image_IMReadMulti_WithParams(const char* filename, int start, int count, int flags);
 DLL_EXPORT bool Image_IMWrite(const char* filename, Mat img);
 DLL_EXPORT bool Image_IMWrite_WithParams(const char* filename, Mat img, IntVector params);
 DLL_EXPORT void Image_IMEncode(const char* fileExt, Mat img, void* vector);

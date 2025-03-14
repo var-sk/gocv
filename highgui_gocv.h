@@ -8,6 +8,15 @@ extern "C" {
 
 #include "core.h"
 
+typedef void(*mouse_callback) (int event, int x, int y, int flags, void *userdata);
+
+/* typedef struct mouse_callback_userdata {
+    char* winname;
+    void* userdata;
+} mouse_callback_userdata; */
+
+DLL_EXPORT void Window_SetMouseCallback(char* winname, mouse_callback on_mouse);
+
 // Window
 DLL_EXPORT void Window_New(const char* winname, int flags);
 DLL_EXPORT void Window_Close(const char* winname);
@@ -16,6 +25,8 @@ DLL_EXPORT double Window_GetProperty(const char* winname, int flag);
 DLL_EXPORT void Window_SetProperty(const char* winname, int flag, double value);
 DLL_EXPORT void Window_SetTitle(const char* winname, const char* title);
 DLL_EXPORT int Window_WaitKey(int);
+DLL_EXPORT int Window_WaitKeyEx(int);
+DLL_EXPORT int Window_PollKey(void);
 DLL_EXPORT void Window_Move(const char* winname, int x, int y);
 DLL_EXPORT void Window_Resize(const char* winname, int width, int height);
 DLL_EXPORT struct Rect Window_SelectROI(const char* winname, Mat img);

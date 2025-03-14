@@ -28,10 +28,18 @@ DLL_EXPORT Net Net_ReadNetFromTensorflowBytes(struct ByteArray model);
 DLL_EXPORT Net Net_ReadNetFromTorch(const char* model);
 DLL_EXPORT Net Net_ReadNetFromONNX(const char* model);
 DLL_EXPORT Net Net_ReadNetFromONNXBytes(struct ByteArray model);
+DLL_EXPORT struct Rect Net_BlobRectToImageRect(struct Rect rect, Size originalSize, double scalefactor, Size size, Scalar mean, bool swapRB,
+                    int ddepth, int dataLayout, int paddingMode, Scalar borderValue);
+DLL_EXPORT struct Rects Net_BlobRectsToImageRects(struct Rects rects, Size originalSize, double scalefactor, Size size, Scalar mean, bool swapRB,
+                    int ddepth, int dataLayout, int paddingMode, Scalar borderValue);
 DLL_EXPORT Mat Net_BlobFromImage(Mat image, double scalefactor, Size size, Scalar mean, bool swapRB,
                       bool crop);
+DLL_EXPORT Mat Net_BlobFromImageWithParams(Mat image, double scalefactor, Size size, Scalar mean, bool swapRB,
+                      int ddepth, int dataLayout, int paddingMode, Scalar borderValue);
 DLL_EXPORT void Net_BlobFromImages(struct Mats images, Mat blob,  double scalefactor, Size size, 
                         Scalar mean, bool swapRB, bool crop, int ddepth);
+DLL_EXPORT void Net_BlobFromImagesWithParams(struct Mats images, Mat blob, double scalefactor, Size size, 
+                        Scalar mean, bool swapRB, int ddepth, int dataLayout, int paddingMode, Scalar borderValue);
 DLL_EXPORT void Net_ImagesFromBlob(Mat blob_, struct Mats* images_);
 DLL_EXPORT void Net_Close(Net net);
 DLL_EXPORT bool Net_Empty(Net net);

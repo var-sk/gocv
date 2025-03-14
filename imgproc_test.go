@@ -1,6 +1,7 @@
 package gocv
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -8,6 +9,7 @@ import (
 	"math"
 	"os"
 	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -116,6 +118,101 @@ func TestCvtColor(t *testing.T) {
 	CvtColor(img, &dest, ColorBGRAToGray)
 	if dest.Empty() || img.Rows() != dest.Rows() || img.Cols() != dest.Cols() {
 		t.Error("Invalid convert in CvtColor test")
+	}
+}
+
+func NewBayerFromMat(src Mat, pattern string) (Mat, error) {
+	dest := NewMatWithSize(src.Rows(), src.Cols(), MatTypeCV8UC1)
+
+	switch pattern {
+	case "bg":
+		for y := 0; y < src.Rows(); y++ {
+			for x := 0; x < src.Cols(); x++ {
+				if (x+y)%2 != 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[1])
+				} else if (x % 2) != 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[0])
+				} else {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[2])
+				}
+			}
+		}
+	case "gb":
+		for y := 0; y < src.Rows(); y++ {
+			for x := 0; x < src.Cols(); x++ {
+				if (x+y)%2 == 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[1])
+				} else if (x % 2) == 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[0])
+				} else {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[2])
+				}
+			}
+		}
+	case "rg":
+		for y := 0; y < src.Rows(); y++ {
+			for x := 0; x < src.Cols(); x++ {
+				if (x+y)%2 != 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[1])
+				} else if (x % 2) == 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[0])
+				} else {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[2])
+				}
+			}
+		}
+	case "gr":
+		for y := 0; y < src.Rows(); y++ {
+			for x := 0; x < src.Cols(); x++ {
+				if (x+y)%2 == 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[1])
+				} else if (x % 2) != 0 {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[0])
+				} else {
+					dest.SetUCharAt(y, x, src.GetVecbAt(y, x)[2])
+				}
+			}
+		}
+	default:
+		dest.Close()
+		return Mat{}, fmt.Errorf("invalid pattern: %s", pattern)
+	}
+
+	return dest, nil
+}
+
+func TestDemosaicing(t *testing.T) {
+	img := IMRead("images/face.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid read of Mat in Demosaicing test")
+	}
+	defer img.Close()
+
+	patterns := map[string]ColorConversionCode{
+		"bg": ColorBayerBGToBGR,
+		"gb": ColorBayerGBToBGR,
+		"rg": ColorBayerRGToBGR,
+		"gr": ColorBayerGRToBGR,
+	}
+
+	for pattern, code := range patterns {
+		bayerImg, err := NewBayerFromMat(img, pattern)
+		if bayerImg.Empty() {
+			t.Error("Invalid conversion from Mat to Bayer in Demosaicing test")
+		}
+		if err != nil {
+			t.Error(err)
+		}
+
+		dest := NewMat()
+
+		Demosaicing(bayerImg, &dest, code)
+		if dest.Empty() || bayerImg.Rows() != dest.Rows() || bayerImg.Cols() != dest.Cols() {
+			t.Error("Invalid convert in Demosaicing test")
+		}
+
+		bayerImg.Close()
+		dest.Close()
 	}
 }
 
@@ -417,6 +514,77 @@ func TestMinAreaRect(t *testing.T) {
 	}
 }
 
+func TestBoxPoints2f(t *testing.T) {
+	img := IMRead("images/face-detect.jpg", IMReadGrayScale)
+	if img.Empty() {
+		t.Error("Invalid read of Mat in BoxPoints2f test")
+	}
+	defer img.Close()
+
+	threshImg := NewMat()
+	defer threshImg.Close()
+
+	Threshold(img, &threshImg, 25, 255, ThresholdBinary)
+
+	contours := FindContours(threshImg, RetrievalExternal, ChainApproxSimple)
+	defer contours.Close()
+
+	contour := contours.At(0)
+
+	hull := NewMat()
+	defer hull.Close()
+	ConvexHull(contour, &hull, false, false)
+	hullPoints := []image.Point{}
+	for i := 0; i < hull.Cols(); i++ {
+		for j := 0; j < hull.Rows(); j++ {
+			p := hull.GetIntAt(j, i)
+			hullPoints = append(hullPoints, contour.At(int(p)))
+		}
+	}
+
+	pvhp := NewPointVectorFromPoints(hullPoints)
+	defer pvhp.Close()
+
+	rect := MinAreaRect2f(pvhp)
+	pts := NewMat()
+	defer pts.Close()
+	BoxPoints2f(rect, &pts)
+
+	if pts.Empty() || pts.Rows() != 4 || pts.Cols() != 2 {
+		t.Error("Invalid BoxPoints2f test")
+	}
+}
+
+func TestMinAreaRect2f(t *testing.T) {
+	src := []image.Point{
+		image.Pt(0, 2),
+		image.Pt(2, 0),
+		image.Pt(8, 4),
+		image.Pt(4, 8),
+	}
+
+	pv := NewPointVectorFromPoints(src)
+	defer pv.Close()
+
+	m := MinAreaRect2f(pv)
+
+	if m.Center.X != 3.5 {
+		t.Errorf("TestMinAreaRect2f(): unexpected center.X = %v, want = %v", m.Center.X, 3.5)
+	}
+	if m.Center.Y != 3.5 {
+		t.Errorf("TestMinAreaRect2f(): unexpected center.Y = %v, want = %v", m.Center.Y, 3.5)
+	}
+	if m.Width != 7.071067810058594 {
+		t.Errorf("TestMinAreaRect2f(): unexpected width = %v, want = %v", m.Width, 7.071067810058594)
+	}
+	if m.Height != 5.656853675842285 {
+		t.Errorf("TestMinAreaRect2f(): unexpected height = %v, want = %v", m.Height, 5.656853675842285)
+	}
+	if m.Angle != 45.0 {
+		t.Errorf("TestMinAreaRect2f(): unexpected angle = %v, want = %v", m.Angle, 45.0)
+	}
+}
+
 func TestFitEllipse(t *testing.T) {
 	src := []image.Point{
 		image.Pt(1, 1),
@@ -692,6 +860,25 @@ func TestErodeWithParams(t *testing.T) {
 	}
 }
 
+func TestErodeWithParamsAndBorderValue(t *testing.T) {
+	img := IMRead("images/face-detect.jpg", IMReadColor)
+	if img.Empty() {
+		t.Error("Invalid read of Mat in ErodeWithParamsAndBorderValue test")
+	}
+	defer img.Close()
+
+	dest := NewMat()
+	defer dest.Close()
+
+	kernel := GetStructuringElement(MorphRect, image.Pt(1, 1))
+	defer kernel.Close()
+
+	ErodeWithParamsAndBorderValue(img, &dest, kernel, image.Pt(-1, -1), 3, 0, NewScalar(0, 0, 0, 0))
+	if dest.Empty() || img.Rows() != dest.Rows() || img.Cols() != dest.Cols() {
+		t.Error("Invalid ErodeWithParamsAndBorderValue test")
+	}
+}
+
 func TestMorphologyDefaultBorderValue(t *testing.T) {
 	zeroScalar := Scalar{}
 	morphologyDefaultBorderValue := MorphologyDefaultBorderValue()
@@ -954,6 +1141,10 @@ func TestHoughCirclesWithParams(t *testing.T) {
 }
 
 func TestHoughLines(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("skipping test on macos")
+	}
+
 	img := IMRead("images/face-detect.jpg", IMReadGrayScale)
 	if img.Empty() {
 		t.Error("Invalid read of Mat in HoughLines test")
@@ -993,6 +1184,10 @@ func TestHoughLines(t *testing.T) {
 }
 
 func TestHoughLinesP(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("skipping test on macos")
+	}
+
 	img := IMRead("images/face-detect.jpg", IMReadGrayScale)
 	if img.Empty() {
 		t.Error("Invalid read of Mat in HoughLinesP test")
@@ -1408,6 +1603,52 @@ func TestCompareHist(t *testing.T) {
 	dist := CompareHist(hist1, hist2, HistCmpCorrel)
 	if dist != 1 {
 		t.Error("Invalid CompareHist test")
+	}
+
+}
+
+func TestEMD(t *testing.T) {
+	img := IMRead("images/face-detect.jpg", IMReadUnchanged)
+	if img.Empty() {
+		t.Error("Invalid read of Mat in CompareHist test")
+	}
+	defer img.Close()
+
+	hist1 := NewMat()
+	defer hist1.Close()
+
+	hist2 := NewMat()
+	defer hist2.Close()
+
+	mask := NewMat()
+	defer mask.Close()
+
+	CalcHist([]Mat{img}, []int{0, 1}, mask, &hist1, []int{30, 32}, []float64{0.0, 180.0, 0.0, 255.0}, false)
+	CalcHist([]Mat{img}, []int{0, 1}, mask, &hist2, []int{30, 32}, []float64{0.0, 180.0, 0.0, 255.0}, false)
+
+	sig1 := NewMatWithSize(30*32, 3, MatTypeCV32FC1)
+	defer sig1.Close()
+
+	sig2 := NewMatWithSize(30*32, 3, MatTypeCV32FC1)
+	defer sig2.Close()
+
+	for h := 0; h < 30; h++ {
+		for s := 0; s < 32; s++ {
+			val := hist1.GetFloatAt(h, s)
+			sig1.SetFloatAt(h*32+s, 0, val)
+			sig1.SetFloatAt(h*32+s, 1, float32(h))
+			sig1.SetFloatAt(h*32+s, 2, float32(s))
+
+			val = hist2.GetFloatAt(h, s)
+			sig2.SetFloatAt(h*32+s, 0, val)
+			sig2.SetFloatAt(h*32+s, 1, float32(h))
+			sig2.SetFloatAt(h*32+s, 2, float32(s))
+		}
+	}
+
+	sim := EMD(sig1, sig2, DistL2)
+	if (1-sim)*100 < 99.9 {
+		t.Error("Invalid EMD test", (1-sim)*100)
 	}
 
 }
@@ -1838,8 +2079,8 @@ func TestGetAffineTransform2f(t *testing.T) {
 func TestFindHomography(t *testing.T) {
 	src := NewMatWithSize(4, 1, MatTypeCV64FC2)
 	defer src.Close()
-	dst := NewMatWithSize(4, 1, MatTypeCV64FC2)
-	defer dst.Close()
+	target := NewMatWithSize(4, 1, MatTypeCV64FC2)
+	defer target.Close()
 
 	srcPoints := []Point2f{
 		{193, 932},
@@ -1847,7 +2088,7 @@ func TestFindHomography(t *testing.T) {
 		{1497, 183},
 		{1889, 681},
 	}
-	dstPoints := []Point2f{
+	targetPoints := []Point2f{
 		{51.51206544281359, -0.10425475260813055},
 		{51.51211051314331, -0.10437947532732306},
 		{51.512222354139325, -0.10437679311830816},
@@ -1859,21 +2100,21 @@ func TestFindHomography(t *testing.T) {
 		src.SetDoubleAt(i, 1, float64(point.Y))
 	}
 
-	for i, point := range dstPoints {
-		dst.SetDoubleAt(i, 0, float64(point.X))
-		dst.SetDoubleAt(i, 1, float64(point.Y))
+	for i, point := range targetPoints {
+		target.SetDoubleAt(i, 0, float64(point.X))
+		target.SetDoubleAt(i, 1, float64(point.Y))
 	}
 
 	mask := NewMat()
 	defer mask.Close()
 
-	m := FindHomography(src, &dst, HomograpyMethodAllPoints, 3, &mask, 2000, 0.995)
+	m := FindHomography(src, target, HomographyMethodAllPoints, 3, &mask, 2000, 0.995)
 	defer m.Close()
 
 	pvsrc := NewPoint2fVectorFromPoints(srcPoints)
 	defer pvsrc.Close()
 
-	pvdst := NewPoint2fVectorFromPoints(dstPoints)
+	pvdst := NewPoint2fVectorFromPoints(targetPoints)
 	defer pvdst.Close()
 
 	m2 := GetPerspectiveTransform2f(pvsrc, pvdst)
@@ -2461,6 +2702,17 @@ func TestPhaseCorrelate(t *testing.T) {
 
 	if responseDifferent > 0.05 {
 		t.Errorf("expected response for different image to be < 0.05, but got %f", responseDifferent)
+	}
+}
+
+func TestCreateHanningWindow(t *testing.T) {
+	dst := NewMat()
+	defer dst.Close()
+
+	CreateHanningWindow(&dst, image.Pt(100, 100), MatTypeCV32F)
+
+	if dst.Empty() {
+		t.Error("Invalid CreateHanningWindow test")
 	}
 }
 
