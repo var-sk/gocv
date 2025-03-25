@@ -43,6 +43,7 @@ DLL_EXPORT void Net_BlobFromImagesWithParams(struct Mats images, Mat blob, doubl
 DLL_EXPORT void Net_ImagesFromBlob(Mat blob_, struct Mats* images_);
 DLL_EXPORT void Net_Close(Net net);
 DLL_EXPORT bool Net_Empty(Net net);
+DLL_EXPORT void Net_EnableWinograd(Net net, bool useWinograd);
 DLL_EXPORT void Net_SetInput(Net net, Mat blob, const char* name);
 DLL_EXPORT Mat Net_Forward(Net net, const char* outputName);
 DLL_EXPORT void Net_ForwardLayers(Net net, struct Mats* outputBlobs, struct CStrings outBlobNames);

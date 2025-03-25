@@ -11,8 +11,8 @@ extern "C" {
 #include "core.h"
 
 #ifdef __cplusplus
-typedef cv::CascadeClassifier* CascadeClassifier;
-typedef cv::HOGDescriptor* HOGDescriptor;
+//typedef cv::CascadeClassifier* CascadeClassifier;
+//typedef cv::HOGDescriptor* HOGDescriptor;
 typedef cv::QRCodeDetector* QRCodeDetector;
 typedef cv::Ptr<cv::FaceDetectorYN>* FaceDetectorYN;
 typedef cv::Ptr<cv::FaceRecognizerSF>* FaceRecognizerSF;
@@ -25,7 +25,7 @@ typedef void* FaceRecognizerSF;
 #endif
 
 // CascadeClassifier
-DLL_EXPORT CascadeClassifier CascadeClassifier_New();
+/*DLL_EXPORT CascadeClassifier CascadeClassifier_New();
 DLL_EXPORT void CascadeClassifier_Close(CascadeClassifier cs);
 DLL_EXPORT int CascadeClassifier_Load(CascadeClassifier cs, const char* name);
 DLL_EXPORT struct Rects CascadeClassifier_DetectMultiScale(CascadeClassifier cs, Mat img);
@@ -42,7 +42,7 @@ DLL_EXPORT struct Rects HOGDescriptor_DetectMultiScaleWithParams(HOGDescriptor h
 DLL_EXPORT Mat HOG_GetDefaultPeopleDetector();
 DLL_EXPORT void HOGDescriptor_SetSVMDetector(HOGDescriptor hog, Mat det);
 
-DLL_EXPORT struct Rects GroupRectangles(struct Rects rects, int groupThreshold, double eps);
+DLL_EXPORT struct Rects GroupRectangles(struct Rects rects, int groupThreshold, double eps);*/
 
 DLL_EXPORT QRCodeDetector QRCodeDetector_New();
 DLL_EXPORT const char* QRCodeDetector_DetectAndDecode(QRCodeDetector qr, Mat input,Mat points,Mat straight_qrcode);

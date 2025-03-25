@@ -2,7 +2,7 @@
 
 // CascadeClassifier
 
-CascadeClassifier CascadeClassifier_New() {
+/*CascadeClassifier CascadeClassifier_New() {
     return new cv::CascadeClassifier();
 }
 
@@ -124,7 +124,7 @@ struct Rects GroupRectangles(struct Rects rects, int groupThreshold, double eps)
 
     Rects ret = {results, (int)vRect.size()};
     return ret;
-}
+}*/
 
 // QRCodeDetector
 

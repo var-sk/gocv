@@ -14,7 +14,7 @@ typedef cv::Ptr<cv::BackgroundSubtractorMOG2>* BackgroundSubtractorMOG2;
 typedef cv::Ptr<cv::BackgroundSubtractorKNN>* BackgroundSubtractorKNN;
 typedef cv::Ptr<cv::Tracker>* Tracker;
 typedef cv::Ptr<cv::TrackerMIL>* TrackerMIL;
-typedef cv::Ptr<cv::TrackerGOTURN>* TrackerGOTURN;
+//typedef cv::Ptr<cv::TrackerGOTURN>* TrackerGOTURN;
 typedef cv::KalmanFilter* KalmanFilter;
 #else
 typedef void* BackgroundSubtractorMOG2;
@@ -49,9 +49,9 @@ DLL_EXPORT bool Tracker_Update(Tracker self, Mat image, Rect* boundingBox);
 DLL_EXPORT TrackerMIL TrackerMIL_Create();
 DLL_EXPORT void TrackerMIL_Close(TrackerMIL self);
 
-DLL_EXPORT TrackerGOTURN TrackerGOTURN_Create(void);
+/*DLL_EXPORT TrackerGOTURN TrackerGOTURN_Create(void);
 DLL_EXPORT TrackerGOTURN TrackerGOTURN_CreateWithParams(const char* modelBin, const char* modelTxt);
-DLL_EXPORT void TrackerGOTURN_Close(TrackerGOTURN tr);
+DLL_EXPORT void TrackerGOTURN_Close(TrackerGOTURN tr);*/
 
 DLL_EXPORT KalmanFilter KalmanFilter_New(int dynamParams, int measureParams);
 DLL_EXPORT KalmanFilter KalmanFilter_NewWithParams(int dynamParams, int measureParams, int controlParams, int type);

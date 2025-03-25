@@ -31,6 +31,7 @@ type Feature2D interface {
 	Feature2DDetectComputer
 }
 
+/*
 // AKAZE is a wrapper around the cv::AKAZE algorithm.
 type AKAZE struct {
 	// C.AKAZE
@@ -367,7 +368,7 @@ func (a *KAZE) DetectAndCompute(src Mat, mask Mat) ([]KeyPoint, Mat) {
 	defer C.KeyPoints_Close(ret)
 
 	return getKeyPoints(ret), desc
-}
+}*/
 
 // MSER is a wrapper around the cv::MSER algorithm.
 type MSER struct {

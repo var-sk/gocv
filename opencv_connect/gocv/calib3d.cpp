@@ -57,10 +57,10 @@ void UndistortPoints(Mat distorted, Mat undistorted, Mat k, Mat d, Mat r, Mat p)
     cv::undistortPoints(*distorted, *undistorted, *k, *d, *r, *p);
 }
 
-bool CheckChessboard(Mat image, Size size) {
+/*bool CheckChessboard(Mat image, Size size) {
     cv::Size sz(size.width, size.height);
     return cv::checkChessboard(*image, sz);
-}
+}*/
 
 bool FindChessboardCorners(Mat image, Size patternSize, Mat corners, int flags) {
     cv::Size sz(patternSize.width, patternSize.height);

@@ -10,6 +10,7 @@ import (
 	"unsafe"
 )
 
+/*
 // CascadeClassifier is a cascade classifier class for object detection.
 //
 // For further details, please see:
@@ -173,7 +174,7 @@ func GroupRectangles(rects []image.Rectangle, groupThreshold int, eps float64) [
 	ret := C.GroupRectangles(cRects, C.int(groupThreshold), C.double(eps))
 
 	return toRectangles(ret)
-}
+}*/
 
 // QRCodeDetector groups the object candidate rectangles.
 //

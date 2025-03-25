@@ -76,7 +76,7 @@ void TrackerMIL_Close(TrackerMIL self) {
     delete self;
 }
 
-TrackerGOTURN TrackerGOTURN_Create(void){
+/*TrackerGOTURN TrackerGOTURN_Create(void) {
   return new cv::Ptr<cv::TrackerGOTURN>(cv::TrackerGOTURN::create());
 }
 
@@ -92,7 +92,7 @@ TrackerGOTURN TrackerGOTURN_CreateWithParams(const char* modelBin, const char* m
 
 void TrackerGOTURN_Close(TrackerGOTURN tr) {
     delete tr;
-}
+}*/
 
 KalmanFilter KalmanFilter_New(int dynamParams, int measureParams) {
     return new cv::KalmanFilter(dynamParams, measureParams, 0, CV_32F);

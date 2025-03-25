@@ -34,8 +34,9 @@ Net Net_ReadNetFromTensorflowBytes(struct ByteArray model) {
 }
 
 Net Net_ReadNetFromTorch(const char* model) {
-    Net n = new cv::dnn::Net(cv::dnn::readNetFromTorch(model));
-    return n;
+    //Net n = new cv::dnn::Net(cv::dnn::readNetFromTorch(model));
+    //return n;
+    return NULL;
 }
 
 Net Net_ReadNetFromONNX(const char* model) {
@@ -44,8 +45,9 @@ Net Net_ReadNetFromONNX(const char* model) {
 }
 
 Net Net_ReadNetFromONNXBytes(struct ByteArray model) {
-    Net n = new cv::dnn::Net(cv::dnn::readNetFromONNX(model.data, model.length));
-    return n;
+    //Net n = new cv::dnn::Net(cv::dnn::readNetFromONNX(model.data, model.length));
+    //return n;
+    return NULL;
 }
 
 void Net_Close(Net net) {
@@ -54,6 +56,10 @@ void Net_Close(Net net) {
 
 bool Net_Empty(Net net) {
     return net->empty();
+}
+
+void Net_EnableWinograd(Net net, bool useWinograd) {
+    net->enableWinograd(useWinograd);
 }
 
 void Net_SetInput(Net net, Mat blob, const char* name) {
@@ -75,6 +81,7 @@ void Net_ForwardLayers(Net net, struct Mats* outputBlobs, struct CStrings outBlo
 
     // copy blobs into outputBlobs
     outputBlobs->mats = new Mat[blobs.size()];
+    //outputBlobs->mats = new cv::Mat*[blobs.size()];
 
     for (size_t i = 0; i < blobs.size(); ++i) {
         outputBlobs->mats[i] = new cv::Mat(blobs[i]);
@@ -125,7 +132,7 @@ void Net_GetLayerNames(Net net, CStrings* names) {
 struct Rect Net_BlobRectToImageRect(struct Rect rect, Size originalSize, double scalefactor, Size size, Scalar mean, bool swapRB,
                     int ddepth, int dataLayout, int paddingMode, Scalar borderValue) {
 
-    cv::Scalar sf(scalefactor);
+    /*cv::Scalar sf(scalefactor);
     cv::Size sz(size.width, size.height);
     cv::Scalar cm(mean.val1, mean.val2, mean.val3, mean.val4);
     cv::dnn::DataLayout dl = static_cast<cv::dnn::DataLayout>(dataLayout);
@@ -135,13 +142,16 @@ struct Rect Net_BlobRectToImageRect(struct Rect rect, Size originalSize, double 
 
     cv::Rect bRect = params.blobRectToImageRect(cv::Rect(rect.x, rect.y, rect.width, rect.height), cv::Size(originalSize.width, originalSize.height));
     Rect r = {bRect.x, bRect.y, bRect.width, bRect.height};
+    return r;*/
+
+    Rect r = { 0, 0, 0, 0 };
     return r;
 }
 
 struct Rects Net_BlobRectsToImageRects(struct Rects rects, Size originalSize, double scalefactor, Size size, Scalar mean, bool swapRB,
                     int ddepth, int dataLayout, int paddingMode, Scalar borderValue) {
 
-    std::vector<cv::Rect> _cRects;
+    /*std::vector<cv::Rect> _cRects;
     for (int i = 0; i < rects.length; ++i) {
         _cRects.push_back(cv::Rect(
             rects.rects[i].x,
@@ -169,6 +179,10 @@ struct Rects Net_BlobRectsToImageRects(struct Rects rects, Size originalSize, do
     }
 
     Rects ret = {drects, (int)detected.size()};
+    return ret;*/
+    
+    Rect r = { 0, 0, 0, 0 };
+    Rects ret = { NULL, 0 };
     return ret;
 }
 
@@ -183,7 +197,7 @@ Mat Net_BlobFromImage(Mat image, double scalefactor, Size size, Scalar mean, boo
 Mat Net_BlobFromImageWithParams(Mat image, double scalefactor, Size size, Scalar mean, bool swapRB,
                       int ddepth, int dataLayout, int paddingMode, Scalar borderValue) {
 
-    cv::Scalar sf(scalefactor);
+    /*cv::Scalar sf(scalefactor);
     cv::Size sz(size.width, size.height);
     cv::Scalar cm(mean.val1, mean.val2, mean.val3, mean.val4);
     cv::dnn::DataLayout dl = static_cast<cv::dnn::DataLayout>(dataLayout);
@@ -191,7 +205,8 @@ Mat Net_BlobFromImageWithParams(Mat image, double scalefactor, Size size, Scalar
     cv::Scalar bv(borderValue.val1, borderValue.val2, borderValue.val3, borderValue.val4);
     cv::dnn::Image2BlobParams params = cv::dnn::Image2BlobParams(sf, sz, cm, swapRB, ddepth, dl, pm, bv);
 
-    return new cv::Mat(cv::dnn::blobFromImageWithParams(*image, params));
+    return new cv::Mat(cv::dnn::blobFromImageWithParams(*image, params));*/
+    return NULL;
 }
 
 void Net_BlobFromImages(struct Mats images, Mat blob, double scalefactor, Size size,
@@ -211,7 +226,7 @@ void Net_BlobFromImages(struct Mats images, Mat blob, double scalefactor, Size s
 
 void Net_BlobFromImagesWithParams(struct Mats images, Mat blob, double scalefactor, Size size,
                        Scalar mean, bool swapRB, int ddepth, int dataLayout, int paddingMode, Scalar borderValue) {
-    std::vector<cv::Mat> imgs;
+    /*std::vector<cv::Mat> imgs;
     
     for (int i = 0; i < images.length; ++i) {
         imgs.push_back(*images.mats[i]);
@@ -220,12 +235,12 @@ void Net_BlobFromImagesWithParams(struct Mats images, Mat blob, double scalefact
     cv::Scalar sf(scalefactor);
     cv::Size sz(size.width, size.height);
     cv::Scalar cm(mean.val1, mean.val2, mean.val3, mean.val4);
-   cv::dnn::DataLayout dl = static_cast<cv::dnn::DataLayout>(dataLayout);
+    cv::dnn::DataLayout dl = static_cast<cv::dnn::DataLayout>(dataLayout);
     cv::dnn::ImagePaddingMode pm = static_cast<cv::dnn::ImagePaddingMode>(paddingMode);
     cv::Scalar bv(borderValue.val1, borderValue.val2, borderValue.val3, borderValue.val4);
     cv::dnn::Image2BlobParams params = cv::dnn::Image2BlobParams(sf, sz, cm, swapRB, ddepth, dl, pm, bv);
 
-    cv::dnn::blobFromImagesWithParams(imgs, *blob, params);
+    cv::dnn::blobFromImagesWithParams(imgs, *blob, params);*/
 }
 
 void Net_ImagesFromBlob(Mat blob_, struct Mats* images_) {

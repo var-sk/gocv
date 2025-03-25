@@ -1,6 +1,6 @@
 #include "features2d.h"
 
-AKAZE AKAZE_Create() {
+/*AKAZE AKAZE_Create() {
     // TODO: params
     return new cv::Ptr<cv::AKAZE>(cv::AKAZE::create());
 }
@@ -251,7 +251,7 @@ struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc) {
 
     KeyPoints ret = {kps, (int)detected.size()};
     return ret;
-}
+}*/
 
 MSER MSER_Create() {
     // TODO: params

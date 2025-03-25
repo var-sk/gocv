@@ -511,6 +511,7 @@ DLL_EXPORT int Point2fVector_Size(Point2fVector pfv);
 DLL_EXPORT void IntVector_Close(struct IntVector ivec);
 
 DLL_EXPORT void CStrings_Close(struct CStrings cstrs);
+DLL_EXPORT void CStrings_Free(struct CStrings cstrs);
 
 DLL_EXPORT RNG TheRNG();
 

@@ -162,7 +162,7 @@ void Mat_PatchNaNs(Mat m) {
 
 Mat Mat_ConvertFp16(Mat m) {
     Mat dst = new cv::Mat();
-    cv::convertFp16(*m, *dst);
+    cv::cuda::convertFp16(*m, *dst);
     return dst;
 }
 
@@ -866,6 +866,13 @@ void CStrings_Close(struct CStrings cstrs) {
         delete [] cstrs.strs[i];
     }
     delete [] cstrs.strs;
+}
+
+void CStrings_Free(struct CStrings cstrs) {
+    for (int i = 0; i < cstrs.length; i++) {
+        free((void*)cstrs.strs[i]);
+    }
+    free(cstrs.strs);
 }
 
 void KeyPoints_Close(struct KeyPoints ks) {

@@ -9,12 +9,12 @@ extern "C" {
 #include "core.h"
 
 #ifdef __cplusplus
-typedef cv::Ptr<cv::AKAZE>* AKAZE;
-typedef cv::Ptr<cv::AgastFeatureDetector>* AgastFeatureDetector;
-typedef cv::Ptr<cv::BRISK>* BRISK;
+//typedef cv::Ptr<cv::AKAZE>* AKAZE;
+//typedef cv::Ptr<cv::AgastFeatureDetector>* AgastFeatureDetector;
+//typedef cv::Ptr<cv::BRISK>* BRISK;
 typedef cv::Ptr<cv::FastFeatureDetector>* FastFeatureDetector;
 typedef cv::Ptr<cv::GFTTDetector>* GFTTDetector;
-typedef cv::Ptr<cv::KAZE>* KAZE;
+//typedef cv::Ptr<cv::KAZE>* KAZE;
 typedef cv::Ptr<cv::MSER>* MSER;
 typedef cv::Ptr<cv::ORB>* ORB;
 typedef cv::Ptr<cv::SimpleBlobDetector>* SimpleBlobDetector;
@@ -36,7 +36,7 @@ typedef void* FlannBasedMatcher;
 typedef void* SIFT;
 #endif
 
-DLL_EXPORT AKAZE AKAZE_Create();
+/*DLL_EXPORT AKAZE AKAZE_Create();
 DLL_EXPORT void AKAZE_Close(AKAZE a);
 DLL_EXPORT struct KeyPoints AKAZE_Detect(AKAZE a, Mat src);
 DLL_EXPORT struct KeyPoints AKAZE_Compute(AKAZE a, Mat src, struct KeyPoints kp, Mat desc);
@@ -65,7 +65,7 @@ DLL_EXPORT KAZE KAZE_Create();
 DLL_EXPORT void KAZE_Close(KAZE a);
 DLL_EXPORT struct KeyPoints KAZE_Detect(KAZE a, Mat src);
 DLL_EXPORT struct KeyPoints KAZE_Compute(KAZE a, Mat src, struct KeyPoints kp, Mat desc);
-DLL_EXPORT struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc);
+DLL_EXPORT struct KeyPoints KAZE_DetectAndCompute(KAZE a, Mat src, Mat mask, Mat desc);*/
 
 DLL_EXPORT MSER MSER_Create();
 DLL_EXPORT void MSER_Close(MSER a);
